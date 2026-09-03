@@ -6,9 +6,12 @@
 //
 
 import SwiftUI
+import DependencyContainer
 
 @main
 struct SimpleBikeComputerApp: App {
+    let dependencyContainer = DependencyContainer()
+
     var body: some Scene {
         WindowGroup {
             ContentView()
