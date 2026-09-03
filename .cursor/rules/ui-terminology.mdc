@@ -1,0 +1,20 @@
+---
+description: UI vocabulary for metrics surfaces — Page, Field, and Layout
+alwaysApply: true
+---
+
+# UI terminology
+
+Use the vocabulary defined in [abstract.md](../../abstract.md) for metrics UI. Rationale: [PDR-0001](../../docs/pdr/0001-page-field-terminology.md).
+
+| Term | Meaning | Avoid |
+|------|---------|--------|
+| **Page** | One full-screen configured metrics surface (1…N, cycleable later) | Dashboard, metrics screen |
+| **Field** | One metric display slot on a page (large or small) | Widget, metric widget |
+| **Layout** | Arrangement template for a page (e.g. large top field + three small fields) | Using "layout" alone to mean a shown screen |
+
+In new code, comments, and docs for this app:
+
+- Prefer type and symbol names such as `Page`, `Field`, and `Layout` where they refer to these concepts.
+- Do not introduce Dashboard or Widget for full-screen metrics surfaces or metric slots.
+- "Settings screen" is fine for Settings; it is not a Page.

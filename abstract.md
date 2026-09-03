@@ -2,6 +2,16 @@
 
 Simple Bike Computer is a native iOS/iPadOS app that functions as a simple bike computer. It can use various sources to read and display real-time bike metrics. It is not a ride-tracking app with start and stop buttons but more of an app to display instantaneous metrics. Time-bound metrics, like average speed and total distance, will be calculated for one of two time boxes: total (forever) and a manually resettable "trip".
 
+## Product docs
+
+| Document | Role |
+|----------|------|
+| This file (`abstract.md`) | Vision: why the app exists, MVP vs later, non-goals, product language |
+| [`docs/requirements.md`](docs/requirements.md) | Living product requirements (edit in place) |
+| [`docs/pdr/`](docs/pdr/) | Product decision records (why a requirement looks like this) |
+
+Architecture decisions (how we build it) belong in `docs/adr/` when needed, not in PDRs.
+
 ## Metrics
 
 The following metrics should be viewable in the app.
@@ -40,18 +50,30 @@ Bike metrics can come from Location Manager, CSCS BLE sensors, or Apple Watch if
 
 The UI will support all four orientations to accomodate any possible mounting to the bike.
 
-### Metrics Screens
+### Terminology
+
+| Term | Meaning |
+|------|---------|
+| **Page** | One full-screen configured metrics surface (1…N, cycleable later) |
+| **Field** | One metric display slot on a page (large or small) |
+| **Layout** | Arrangement template for a page (e.g. large top field + three small fields) |
+
+Do not use *Dashboard*, *metrics screen*, or *widget* for these concepts. Settings remains a *settings screen*; it is not a Page.
+
+See [PDR-0001](docs/pdr/0001-page-field-terminology.md).
+
+### Pages
 
 #### Minimum Viable Product
 
-There will be a single layout available in landscape and a single layout available in portrait. The landscape layout will display instantaneous speed in a large widget in the top center with distance, time (total), and instantaneous cadence in smaller widgets horizontally stacked along the bottom. The portrait layout will display instantaneous speed in a large widget in the top center with distance, time (total), and instantaneous cadence in smaller widgets vertically stacked along the bottom.
+There will be a single page with one layout available in landscape and one layout available in portrait. The landscape layout will display instantaneous speed in a large field in the top center with distance, time (total), and instantaneous cadence in smaller fields horizontally stacked along the bottom. The portrait layout will display instantaneous speed in a large field in the top center with distance, time (total), and instantaneous cadence in smaller fields vertically stacked along the bottom.
 
 #### Future
 
 The following will be added in future versions of the app.
 - more layouts available (portrait and landscape)
-- the ability to display multiple metrics in a single metric widget with the display cycling between configured metrics by periodic cycling, tapping, or swiping
-- the ability to add and configure multiple instances of available layouts to be displayed full screen with cycling between layouts by periodic cycling, tapping or swiping
+- the ability to display multiple metrics in a single field with the display cycling between configured metrics by periodic cycling, tapping, or swiping
+- the ability to add and configure multiple pages (configured layout instances) to be displayed full screen with cycling between pages by periodic cycling, tapping, or swiping
 
 ### Settings
 

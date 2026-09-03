@@ -1,0 +1,19 @@
+---
+description: Product docs model — vision, living requirements, and PDRs vs ADRs
+alwaysApply: true
+---
+
+# Product docs
+
+This project separates product intent from architecture:
+
+| Document | Role |
+|----------|------|
+| [abstract.md](../../abstract.md) | Vision and product language |
+| [docs/requirements.md](../../docs/requirements.md) | Living requirements (edit in place) |
+| [docs/pdr/](../../docs/pdr/) | Product decision records (*what* the product is) |
+| `docs/adr/` | Architecture decision records (*how* we build it), when they exist |
+
+Write a PDR only when there were real alternatives whose rationale would otherwise be lost. Follow the **product-decision-records** skill for PDR files and the **architecture-decision-records** skill for ADRs.
+
+Do not put product vocabulary or product requirement decisions in `docs/adr/`.
