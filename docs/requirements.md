@@ -60,3 +60,10 @@ When multiple pages and multi-metric fields exist: swipe (whole surface) changes
 
 - **Status**: Later
 - **See**: [PDR-0002](pdr/0002-page-field-navigation.md)
+
+### REQ-UI-003 Settings presentation
+
+Metrics pages are the always-on primary surface. Settings is presented modally from Root (not as a tab or as a page in the metrics pager). Dismiss returns to the same metrics page. Do not use a persistent tab bar for Settings versus metrics.
+
+- **Status**: Accepted
+- **See**: [PDR-0003](pdr/0003-settings-modal-presentation.md)

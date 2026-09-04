@@ -4,6 +4,7 @@
 //
 
 import DependencyContainer
+import RootUI
 import SwiftUI
 
 @main
@@ -13,7 +14,7 @@ struct SimpleBikeComputerApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView(rootViewModel: Self.rootViewModel)
+            RootView(viewModel: Self.rootViewModel)
         }
     }
 }

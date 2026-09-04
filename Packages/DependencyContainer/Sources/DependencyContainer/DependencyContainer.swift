@@ -1,11 +1,8 @@
 import Foundation
 import LayoutsModel
 import LayoutsVM
-
-public struct RootViewModel {
-    public let portraitSingleFieldLayoutViewModel: RuntimePortraitSingleFieldLayoutViewModel
-    public let landscapeSingleFieldLayoutViewModel: RuntimeLandscapeSingleFieldLayoutViewModel
-}
+import PagesVM
+import RootVM
 
 @MainActor
 public final class DependencyContainer {
@@ -15,13 +12,19 @@ public final class DependencyContainer {
         speedMetric = Self.makeSpeedMetric()
     }
 
-    public func makeRootViewModel() -> RootViewModel {
-        RootViewModel(
-            portraitSingleFieldLayoutViewModel: RuntimePortraitSingleFieldLayoutViewModel(
-                metric: speedMetric,
-            ),
-            landscapeSingleFieldLayoutViewModel: RuntimeLandscapeSingleFieldLayoutViewModel(
-                metric: speedMetric,
+    public func makeRootViewModel() -> RuntimeRootViewModel {
+        RuntimeRootViewModel(
+            pages: RuntimePagesViewModel(
+                portraitPages: RuntimePortraitPagesViewModel(
+                    layout: RuntimePortraitSingleFieldLayoutViewModel(
+                        metric: speedMetric,
+                    ),
+                ),
+                landscapePages: RuntimeLandscapePagesViewModel(
+                    layout: RuntimeLandscapeSingleFieldLayoutViewModel(
+                        metric: speedMetric,
+                    ),
+                ),
             ),
         )
     }

@@ -4,12 +4,12 @@ import Observation
 
 @Observable
 @MainActor
-package final class PreviewMetric: Metric {
-    package let name: String
-    package let value: String
-    package let units: String
+public final class PreviewMetric: Metric {
+    public let name: String
+    public let value: String
+    public let units: String
 
-    package init(name: String, value: String, units: String) {
+    public init(name: String, value: String, units: String) {
         self.name = name
         self.value = value
         self.units = units
@@ -18,17 +18,17 @@ package final class PreviewMetric: Metric {
 
 @Observable
 @MainActor
-package final class PreviewPortraitSingleFieldLayoutViewModel: PortraitSingleFieldLayoutViewModel {
-    package let metric = PreviewMetric(name: "Speed", value: "20.0", units: "mph")
+public final class PreviewPortraitSingleFieldLayoutViewModel: PortraitSingleFieldLayoutViewModel {
+    public let metric = PreviewMetric(name: "Speed", value: "20.0", units: "mph")
 
-    package init() {}
+    public init() {}
 }
 
 @Observable
 @MainActor
-package final class PreviewLandscapeSingleFieldLayoutViewModel: LandscapeSingleFieldLayoutViewModel {
-    package let metric = PreviewMetric(name: "Speed", value: "20.0", units: "mph")
+public final class PreviewLandscapeSingleFieldLayoutViewModel: LandscapeSingleFieldLayoutViewModel {
+    public let metric = PreviewMetric(name: "Speed", value: "20.0", units: "mph")
 
-    package init() {}
+    public init() {}
 }
 #endif

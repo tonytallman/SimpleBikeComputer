@@ -15,6 +15,8 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../Layouts"),
+        .package(path: "../Pages"),
+        .package(path: "../Root"),
     ],
     targets: [
         .target(
@@ -22,6 +24,8 @@ let package = Package(
             dependencies: [
                 .product(name: "LayoutsModel", package: "Layouts"),
                 .product(name: "LayoutsVM", package: "Layouts"),
+                .product(name: "PagesVM", package: "Pages"),
+                .product(name: "RootVM", package: "Root"),
             ],
         ),
     ],
