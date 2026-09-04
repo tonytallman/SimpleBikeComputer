@@ -1,0 +1,31 @@
+---
+description: Prefer AsyncSequence over Combine for streaming APIs
+alwaysApply: true
+---
+
+# AsyncSequence, not Combine
+
+Rationale: [ADR-0001](../../docs/adr/0001-asyncsequence-not-combine.md).
+
+App-owned streams use `AsyncSequence` / `AsyncStream`. Do not `import Combine` or expose Combine types. Do not copy Combine metric wiring from Biker.
+
+```swift
+// ✅ GOOD
+protocol SpeedSource {
+    var speeds: some AsyncSequence<Measurement<UnitSpeed>, Never> { get }
+}
+
+// ❌ BAD
+import Combine
+protocol SpeedSource {
+    var speeds: AnyPublisher<Measurement<UnitSpeed>, Never> { get }
+}
+```
+
+Forbidden in this app’s modules: `Publisher`, `AnyPublisher`, `Subject` / `PassthroughSubject` / `CurrentValueSubject`, `@Published`.
+
+UI latest values live on Observation (`@Observable`) view models, not Combine subjects.
+
+**Boundary exception only:** if a vendor API is Combine-only, adapt at the edge (`publisher.values` or `AsyncStream`). Combine types must not appear in this app’s public or package APIs.
+
+When merge / combineLatest / throttle are first needed, add swift-async-algorithms — do not add Combine instead.

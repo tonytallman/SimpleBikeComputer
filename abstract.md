@@ -84,4 +84,5 @@ Mostly take settings screens and architecture from [Biker](https://github.com/to
 - Use dependency injection with composition at the composition root.
 - Independent software modules are local Swift packages.
 - Code with dependencies defines its own dependencies, not coupling directly to other project types. For example, a hypothetical `class HeartRateService` will define an embedded `protocol Logger` and `protocol HeartRateSource` that the dependency container will satisfy with existing instances that might or might not need to adapted to fit the dependency protocols.
+- Prefer `AsyncSequence` over Combine for streaming APIs; see [ADR-0001](docs/adr/0001-asyncsequence-not-combine.md).
 - I want to have AI work in smaller chunks so that I can steer the development before too much code is written.
