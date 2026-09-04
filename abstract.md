@@ -54,9 +54,12 @@ The UI will support all four orientations to accomodate any possible mounting to
 
 | Term | Meaning |
 |------|---------|
-| **Page** | One full-screen configured metrics surface (1…N, cycleable later) |
-| **Field** | One metric display slot on a page (large or small) |
+| **Page** | One full-screen configured metrics surface (1…N, cycleable later); a configured instance of a layout |
+| **Field** | One display slot on a page (large or small) that shows a metric; later a field may be configured with several metrics and cycle among them |
 | **Layout** | Arrangement template for a page (e.g. large top field + three small fields) |
+| **Metric** | A kind of ride data (e.g. instantaneous speed, total distance), independent of UI |
+
+A **field** is a slot; a **metric** is the data shown in that slot. When a field cycles, the rotating things are metrics, not nested fields.
 
 Do not use *Dashboard*, *metrics screen*, or *widget* for these concepts. Settings remains a *settings screen*; it is not a Page.
 

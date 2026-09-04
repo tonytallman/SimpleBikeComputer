@@ -47,4 +47,9 @@ Statement of the requirement in plain language.
 
 ## Requirements
 
-None yet.
+### REQ-UI-001 Metrics UI vocabulary
+
+Use **Page**, **Field**, **Layout**, and **Metric** as defined in the product language: a page is a configured layout instance; a field is a slot that displays a metric (later, possibly several metrics that cycle); a metric is a kind of ride data independent of UI.
+
+- **Status**: Accepted
+- **See**: [PDR-0001](pdr/0001-page-field-terminology.md)
