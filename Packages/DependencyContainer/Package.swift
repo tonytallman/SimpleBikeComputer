@@ -13,11 +13,16 @@ let package = Package(
             targets: ["DependencyContainer"],
         ),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(path: "../Layouts"),
+    ],
     targets: [
         .target(
             name: "DependencyContainer",
-            dependencies: [],
+            dependencies: [
+                .product(name: "LayoutsModel", package: "Layouts"),
+                .product(name: "LayoutsVM", package: "Layouts"),
+            ],
         ),
     ],
 )

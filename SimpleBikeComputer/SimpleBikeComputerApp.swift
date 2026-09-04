@@ -2,19 +2,18 @@
 //  SimpleBikeComputerApp.swift
 //  SimpleBikeComputer
 //
-//  Created by Tony Tallman on 9/2/26.
-//
 
-import SwiftUI
 import DependencyContainer
+import SwiftUI
 
 @main
 struct SimpleBikeComputerApp: App {
-    let dependencyContainer = DependencyContainer()
+    @MainActor private static let dependencyContainer = DependencyContainer()
+    @MainActor private static let rootViewModel = dependencyContainer.makeRootViewModel()
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(rootViewModel: Self.rootViewModel)
         }
     }
 }

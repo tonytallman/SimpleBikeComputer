@@ -2,23 +2,29 @@
 //  ContentView.swift
 //  SimpleBikeComputer
 //
-//  Created by Tony Tallman on 9/2/26.
-//
 
+import DependencyContainer
+import LayoutsUI
 import SwiftUI
 
 struct ContentView: View {
+    let rootViewModel: RootViewModel
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        GeometryReader { geometry in
+            if geometry.size.width > geometry.size.height {
+                LandscapeSingleFieldLayout(
+                    viewModel: rootViewModel.landscapeSingleFieldLayoutViewModel,
+                )
+            } else {
+                PortraitSingleFieldLayout(
+                    viewModel: rootViewModel.portraitSingleFieldLayoutViewModel,
+                )
+            }
         }
-        .padding()
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(rootViewModel: DependencyContainer().makeRootViewModel())
 }

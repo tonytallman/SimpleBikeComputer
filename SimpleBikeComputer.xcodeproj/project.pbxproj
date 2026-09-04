@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		EA77B0CE3048D18200404565 /* DependencyContainer in Frameworks */ = {isa = PBXBuildFile; productRef = EA77B0CF3048D18200404565 /* DependencyContainer */; };
+		EA88C1DF4159E29311515676 /* LayoutsUI in Frameworks */ = {isa = PBXBuildFile; productRef = EA88C1E04159E29311515677 /* LayoutsUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -32,6 +33,7 @@
 		EA014E773048AE0D0084AB89 /* SimpleBikeComputerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimpleBikeComputerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA014E813048AE0D0084AB89 /* SimpleBikeComputerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimpleBikeComputerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA77B0CD3048D18200404565 /* DependencyContainer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DependencyContainer; sourceTree = "<group>"; };
+		EA88C1DE4159E29311515675 /* Layouts */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Layouts; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -58,6 +60,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EA77B0CE3048D18200404565 /* DependencyContainer in Frameworks */,
+				EA88C1DF4159E29311515676 /* LayoutsUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				EA77B0CD3048D18200404565 /* DependencyContainer */,
+				EA88C1DE4159E29311515675 /* Layouts */,
 			);
 			path = Packages;
 			sourceTree = "<group>";
@@ -128,6 +132,7 @@
 			name = SimpleBikeComputer;
 			packageProductDependencies = (
 				EA77B0CF3048D18200404565 /* DependencyContainer */,
+				EA88C1E04159E29311515677 /* LayoutsUI */,
 			);
 			productName = "Simple Bike Computer";
 			productReference = EA014E6A3048AE0C0084AB89 /* SimpleBikeComputer.app */;
@@ -599,6 +604,10 @@
 		EA77B0CF3048D18200404565 /* DependencyContainer */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DependencyContainer;
+		};
+		EA88C1E04159E29311515677 /* LayoutsUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LayoutsUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

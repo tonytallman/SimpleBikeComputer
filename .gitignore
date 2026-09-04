@@ -1,2 +1,5 @@
 # Xcode user-specific data
 xcuserdata/
+
+# Swift Package Manager build artifacts (any local package)
+.build/
