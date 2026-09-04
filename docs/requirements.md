@@ -53,3 +53,10 @@ Use **Page**, **Field**, **Layout**, and **Metric** as defined in the product la
 
 - **Status**: Accepted
 - **See**: [PDR-0001](pdr/0001-page-field-terminology.md)
+
+### REQ-UI-002 Page and field navigation
+
+When multiple pages and multi-metric fields exist: swipe (whole surface) changes page; tap on a field cycles that field’s configured metrics; an optional timer may cycle field metrics. Do not use swipe to cycle metrics in a field, or tap/timer to change page, as the default product. MVP remains one page and one metric per field with no cycling.
+
+- **Status**: Later
+- **See**: [PDR-0002](pdr/0002-page-field-navigation.md)

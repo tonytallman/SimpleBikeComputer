@@ -1,5 +1,5 @@
 ---
-description: UI vocabulary for metrics surfaces — Page, Field, Layout, and Metric
+description: UI vocabulary for metrics surfaces — Page, Field, Layout, Metric, and navigation
 alwaysApply: true
 ---
 
@@ -15,6 +15,18 @@ Use the vocabulary defined in [abstract.md](../../abstract.md) for metrics UI. R
 | **Metric** | A kind of ride data (e.g. instantaneous speed, total distance), independent of UI | Treating a field as if it *were* the metric |
 
 A **field** is a slot; a **metric** is the data shown in that slot. When a field cycles, the rotating things are metrics, not nested fields.
+
+## Navigation (later)
+
+When multiple pages or multi-metric fields exist ([PDR-0002](../../docs/pdr/0002-page-field-navigation.md)):
+
+| Input | Owns |
+|-------|------|
+| **Swipe** | Pages (whole surface) |
+| **Tap** | Metrics in the tapped field |
+| **Optional timer** | Field metrics (not pages by default) |
+
+Do not use swipe to cycle metrics in a field, or tap/timer to change page, as the default product.
 
 In new code, comments, and docs for this app:
 

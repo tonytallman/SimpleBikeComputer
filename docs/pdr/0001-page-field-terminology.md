@@ -35,4 +35,4 @@ Product language is also recorded under UI → Terminology in [`abstract.md`](..
 
 **Negative**: Differs from Biker’s Dashboard / Widget naming; readers of both codebases must not assume the same terms.
 
-**Risks / follow-ups**: Agent guidance lives in [`.cursor/rules/ui-terminology.mdc`](../../.cursor/rules/ui-terminology.mdc).
+**Risks / follow-ups**: Agent guidance lives in [`.cursor/rules/ui-terminology.mdc`](../../.cursor/rules/ui-terminology.mdc). Ride-time navigation between pages and metrics in a field is recorded in [PDR-0002](0002-page-field-navigation.md).

@@ -75,8 +75,10 @@ There will be a single page with one layout available in landscape and one layou
 
 The following will be added in future versions of the app.
 - more layouts available (portrait and landscape)
-- the ability to display multiple metrics in a single field with the display cycling between configured metrics by periodic cycling, tapping, or swiping
-- the ability to add and configure multiple pages (configured layout instances) to be displayed full screen with cycling between pages by periodic cycling, tapping, or swiping
+- the ability to display multiple metrics in a single field, cycling between those metrics by tapping the field or an optional timer
+- the ability to add and configure multiple pages (configured layout instances) to be displayed full screen, with swipe between pages (page-control style)
+
+Ride-time inputs are orthogonal: swipe changes page; tap and optional timer cycle metrics within a field. See [PDR-0002](docs/pdr/0002-page-field-navigation.md).
 
 ### Settings
 
