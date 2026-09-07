@@ -1,15 +1,21 @@
 import Foundation
 import LayoutsModel
 import LayoutsVM
+import Metrics
 import PagesVM
 import RootVM
 
 @MainActor
 public final class DependencyContainer {
-    private let speedMetric: RuntimeMetric
+    private let speedSource: any Metrics.Metric<Measurement<UnitSpeed>>
+    private let speedMetric: LayoutsModel.RuntimeMetric
 
     public init() {
-        speedMetric = Self.makeSpeedMetric()
+        speedSource = Self.makeSpeedSource()
+        speedMetric = LayoutsModel.RuntimeMetric(
+            name: "Speed",
+            values: speedSource.values,
+        )
     }
 
     public func makeRootViewModel() -> RuntimeRootViewModel {
@@ -29,10 +35,17 @@ public final class DependencyContainer {
         )
     }
 
-    private static func makeSpeedMetric() -> RuntimeMetric {
-        let stream = AsyncStream<Measurement<UnitSpeed>> { continuation in
+    private static func makeSpeedSource() -> any Metrics.Metric<Measurement<UnitSpeed>> {
+        let values = AsyncStream<Measurement<UnitSpeed>> { continuation in
             continuation.yield(Measurement(value: 20, unit: .milesPerHour))
         }
-        return RuntimeMetric(name: "Speed", values: stream)
+        let isAvailable = AsyncStream<Bool> { continuation in
+            continuation.yield(true)
+        }
+        return Metrics.RuntimeMetric(
+            values: values,
+            isAvailable: isAvailable,
+            source: .phone,
+        ).shared()
     }
 }

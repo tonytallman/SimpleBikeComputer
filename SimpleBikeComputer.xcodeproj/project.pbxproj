@@ -34,6 +34,7 @@
 		EA014E813048AE0D0084AB89 /* SimpleBikeComputerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SimpleBikeComputerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		EA77B0CD3048D18200404565 /* DependencyContainer */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DependencyContainer; sourceTree = "<group>"; };
 		EA88C1DE4159E29311515675 /* Layouts */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Layouts; sourceTree = "<group>"; };
+		EA88C1DF4159E29311515676 /* Metrics */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Metrics; sourceTree = "<group>"; };
 		EA99D2EF5260F30422626788 /* Pages */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Pages; sourceTree = "<group>"; };
 		EA99D2F05260F30422626789 /* Root */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Root; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -109,6 +110,7 @@
 			children = (
 				EA77B0CD3048D18200404565 /* DependencyContainer */,
 				EA88C1DE4159E29311515675 /* Layouts */,
+				EA88C1DF4159E29311515676 /* Metrics */,
 				EA99D2EF5260F30422626788 /* Pages */,
 				EA99D2F05260F30422626789 /* Root */,
 			);
