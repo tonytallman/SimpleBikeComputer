@@ -31,6 +31,14 @@ struct RuntimeMetricTests {
     }
 
     @Test
+    func speedMetricFactorySetsDisplayName() {
+        let (stream, _) = AsyncStream.makeStream(of: Measurement<UnitSpeed>.self)
+        let metric = RuntimeMetric.speedMetric(values: stream)
+
+        #expect(metric.name == "Speed")
+    }
+
+    @Test
     func formatsFractionalValues() async {
         let (stream, continuation) = AsyncStream.makeStream(of: Measurement<UnitSpeed>.self)
         let metric = RuntimeMetric(name: "Speed", values: stream)

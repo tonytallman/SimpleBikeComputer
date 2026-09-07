@@ -12,8 +12,7 @@ public final class DependencyContainer {
 
     public init() {
         speedSource = Self.makeSpeedSource()
-        speedMetric = LayoutsModel.RuntimeMetric(
-            name: "Speed",
+        speedMetric = LayoutsModel.RuntimeMetric.speedMetric(
             values: speedSource.values,
         )
     }

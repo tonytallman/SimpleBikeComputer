@@ -31,6 +31,16 @@ public final class RuntimeMetric: Metric {
         }
     }
 
+    public static func speedMetric<Values>(
+        values: Values,
+    ) -> RuntimeMetric where Values: AsyncSequence,
+        Values.Element == Measurement<UnitSpeed>,
+        Values.Failure == Never,
+        Values: Sendable
+    {
+        RuntimeMetric(name: "Speed", values: values)
+    }
+
     deinit {
         consumeTask?.cancel()
     }

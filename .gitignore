@@ -3,3 +3,4 @@ xcuserdata/
 
 # Swift Package Manager build artifacts (any local package)
 .build/
+.build-ios/
