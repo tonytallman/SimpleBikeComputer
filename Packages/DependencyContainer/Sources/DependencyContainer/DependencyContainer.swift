@@ -5,6 +5,7 @@ import Location
 import Metrics
 import PagesVM
 import RootVM
+import SettingsVM
 
 @MainActor
 public final class DependencyContainer {
@@ -34,6 +35,7 @@ public final class DependencyContainer {
                     ),
                 ),
             ),
+            makeSettings: { RuntimeSettingsViewModel() },
         )
     }
 }

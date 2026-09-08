@@ -1,5 +1,6 @@
 import PagesUI
 import RootVM
+import SettingsUI
 import SwiftUI
 
 public struct RootView<ViewModel: RootViewModel>: View {
@@ -10,7 +11,27 @@ public struct RootView<ViewModel: RootViewModel>: View {
     }
 
     public var body: some View {
-        PagesView(viewModel: viewModel.pages)
+        ZStack(alignment: .topTrailing) {
+            PagesView(viewModel: viewModel.pages)
+
+            Button {
+                viewModel.isSettingsPresented = true
+            } label: {
+                Image(systemName: "gearshape")
+                    .font(.title2)
+                    .foregroundStyle(.primary)
+                    .padding(10)
+                    .background(.ultraThinMaterial, in: Circle())
+            }
+            .accessibilityLabel("Settings")
+            .padding(.top, 8)
+            .padding(.trailing, 12)
+            .safeAreaPadding(.top)
+            .safeAreaPadding(.trailing)
+        }
+        .fullScreenCover(isPresented: $viewModel.isSettingsPresented) {
+            SettingsView(viewModel: viewModel.makeSettings())
+        }
     }
 }
 

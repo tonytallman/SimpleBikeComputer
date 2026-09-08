@@ -18,14 +18,16 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../Pages"),
         .package(path: "../Layouts"),
+        .package(path: "../Pages"),
+        .package(path: "../Settings"),
     ],
     targets: [
         .target(
             name: "RootVM",
             dependencies: [
                 .product(name: "PagesVM", package: "Pages"),
+                .product(name: "SettingsVM", package: "Settings"),
             ],
         ),
         .target(
@@ -33,6 +35,7 @@ let package = Package(
             dependencies: [
                 "RootVM",
                 .product(name: "PagesUI", package: "Pages"),
+                .product(name: "SettingsUI", package: "Settings"),
             ],
         ),
         .testTarget(
@@ -42,6 +45,7 @@ let package = Package(
                 .product(name: "PagesVM", package: "Pages"),
                 .product(name: "LayoutsVM", package: "Layouts"),
                 .product(name: "LayoutsModel", package: "Layouts"),
+                .product(name: "SettingsVM", package: "Settings"),
             ],
         ),
     ],

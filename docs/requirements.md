@@ -67,3 +67,10 @@ Metrics pages are the always-on primary surface. Settings is presented modally f
 
 - **Status**: Accepted
 - **See**: [PDR-0003](pdr/0003-settings-modal-presentation.md)
+
+### REQ-UI-004 Settings entry affordance
+
+A discreet overlay gear on Root (not a navigation bar on the metrics surface) opens Settings. Dismiss returns to the same metrics page.
+
+- **Status**: Accepted
+- **See**: [PDR-0004](pdr/0004-settings-entry-affordance.md)

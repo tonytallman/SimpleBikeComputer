@@ -19,6 +19,7 @@ let package = Package(
         .package(path: "../Metrics"),
         .package(path: "../Pages"),
         .package(path: "../Root"),
+        .package(path: "../Settings"),
     ],
     targets: [
         .target(
@@ -30,6 +31,7 @@ let package = Package(
                 "Metrics",
                 .product(name: "PagesVM", package: "Pages"),
                 .product(name: "RootVM", package: "Root"),
+                .product(name: "SettingsVM", package: "Settings"),
             ],
         ),
     ],

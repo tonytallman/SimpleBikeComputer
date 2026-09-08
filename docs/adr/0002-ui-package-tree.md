@@ -28,3 +28,5 @@ When Settings is added or a dependency cycle appears, adopt **composition-root v
 **Negative**: Root will eventually import both Pages and Settings UI; the graph may need refactoring before Settings lands.
 
 **Risks / follow-ups**: Revisit when adding the Settings package. If Root imports Pages and Settings and a cycle threatens, switch to composition-root view injection and record any superseding ADR.
+
+**Follow-up (2026-09-08)**: Settings landed as `RootUI → SettingsUI` alongside `RootUI → PagesUI`. That is a tree, not a cycle, so composition-root view injection remains deferred.

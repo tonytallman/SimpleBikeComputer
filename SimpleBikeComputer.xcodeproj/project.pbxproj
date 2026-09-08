@@ -38,6 +38,7 @@
 		EA88C1DF4159E29311515676 /* Metrics */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Metrics; sourceTree = "<group>"; };
 		EA99D2EF5260F30422626788 /* Pages */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Pages; sourceTree = "<group>"; };
 		EA99D2F05260F30422626789 /* Root */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Root; sourceTree = "<group>"; };
+		EA99D2F35260F3042262678C /* Settings */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Settings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -115,6 +116,7 @@
 				EA88C1DF4159E29311515676 /* Metrics */,
 				EA99D2EF5260F30422626788 /* Pages */,
 				EA99D2F05260F30422626789 /* Root */,
+				EA99D2F35260F3042262678C /* Settings */,
 			);
 			path = Packages;
 			sourceTree = "<group>";
