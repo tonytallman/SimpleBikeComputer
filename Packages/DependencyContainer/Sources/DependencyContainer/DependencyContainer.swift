@@ -1,17 +1,20 @@
 import Foundation
 import LayoutsModel
 import LayoutsVM
+import Location
 import Metrics
 import PagesVM
 import RootVM
 
 @MainActor
 public final class DependencyContainer {
+    private let coreLocationSpeedSource: CoreLocationSpeedSource
     private let speedSource: any Metrics.Metric<Measurement<UnitSpeed>>
     private let speedMetric: LayoutsModel.RuntimeMetric
 
     public init() {
-        speedSource = Self.makeSpeedSource()
+        coreLocationSpeedSource = CoreLocationSpeedSource()
+        speedSource = coreLocationSpeedSource.asSpeedMetric().shared()
         speedMetric = LayoutsModel.RuntimeMetric.speedMetric(
             values: speedSource.values,
         )
@@ -32,19 +35,5 @@ public final class DependencyContainer {
                 ),
             ),
         )
-    }
-
-    private static func makeSpeedSource() -> any Metrics.Metric<Measurement<UnitSpeed>> {
-        let values = AsyncStream<Measurement<UnitSpeed>> { continuation in
-            continuation.yield(Measurement(value: 20, unit: .milesPerHour))
-        }
-        let isAvailable = AsyncStream<Bool> { continuation in
-            continuation.yield(true)
-        }
-        return Metrics.RuntimeMetric(
-            values: values,
-            isAvailable: isAvailable,
-            source: .phone,
-        ).shared()
     }
 }
