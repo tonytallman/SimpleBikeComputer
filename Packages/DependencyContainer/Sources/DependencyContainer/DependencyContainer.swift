@@ -9,15 +9,21 @@ import SettingsVM
 
 @MainActor
 public final class DependencyContainer {
+    private let metricsSettings: DefaultMetricsSettings
     private let coreLocationSpeedSource: CoreLocationSpeedSource
     private let speedSource: any Metrics.Metric<Measurement<UnitSpeed>>
     private let speedMetric: LayoutsModel.RuntimeMetric
+    private let appStorage = UserDefaults.standard.asAppStorage()
 
     public init() {
+        let settingsStorage = appStorage
+            .withNamespacedKeys("Settings")
+            .asSettingsStorage()
+        metricsSettings = DefaultMetricsSettings(storage: settingsStorage)
         coreLocationSpeedSource = CoreLocationSpeedSource()
         speedSource = coreLocationSpeedSource.asSpeedMetric().shared()
         speedMetric = LayoutsModel.RuntimeMetric.speedMetric(
-            values: speedSource.values,
+            values: speedSource.values.inUnits(metricsSettings.speedUnits),
         )
     }
 
@@ -35,7 +41,9 @@ public final class DependencyContainer {
                     ),
                 ),
             ),
-            makeSettings: { RuntimeSettingsViewModel() },
+            makeSettings: { [metricsSettings] in
+                RuntimeSettingsViewModel(metricsSettings: metricsSettings)
+            },
         )
     }
 }

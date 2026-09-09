@@ -1,3 +1,4 @@
+import Foundation
 import LayoutsModel
 import LayoutsVM
 import PagesVM
@@ -27,9 +28,10 @@ struct RootViewModelTests {
                 ),
             ),
         )
+        let metricsSettings = DefaultMetricsSettings(storage: InMemorySettingsStorage())
         let viewModel = RuntimeRootViewModel(
             pages: pages,
-            makeSettings: { RuntimeSettingsViewModel() },
+            makeSettings: { RuntimeSettingsViewModel(metricsSettings: metricsSettings) },
         )
 
         #expect(viewModel.pages === pages)
@@ -56,11 +58,12 @@ struct RootViewModelTests {
                 ),
             ),
         )
+        let metricsSettings = DefaultMetricsSettings(storage: InMemorySettingsStorage())
         let viewModel = RuntimeRootViewModel(
             pages: pages,
             makeSettings: {
                 factoryCallCount += 1
-                return RuntimeSettingsViewModel()
+                return RuntimeSettingsViewModel(metricsSettings: metricsSettings)
             },
         )
 
@@ -92,9 +95,10 @@ struct RootViewModelTests {
                 ),
             ),
         )
+        let metricsSettings = DefaultMetricsSettings(storage: InMemorySettingsStorage())
         let viewModel = RuntimeRootViewModel(
             pages: pages,
-            makeSettings: { RuntimeSettingsViewModel() },
+            makeSettings: { RuntimeSettingsViewModel(metricsSettings: metricsSettings) },
         )
 
         #expect(viewModel.isSettingsPresented == false)

@@ -34,5 +34,9 @@ let package = Package(
                 .product(name: "SettingsVM", package: "Settings"),
             ],
         ),
+        .testTarget(
+            name: "DependencyContainerTests",
+            dependencies: ["DependencyContainer"],
+        ),
     ],
 )

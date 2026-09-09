@@ -29,5 +29,9 @@ let package = Package(
                 "SettingsVM",
             ],
         ),
+        .testTarget(
+            name: "SettingsVMTests",
+            dependencies: ["SettingsVM"],
+        ),
     ],
 )

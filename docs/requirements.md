@@ -74,3 +74,17 @@ A discreet overlay gear on Root (not a navigation bar on the metrics surface) op
 
 - **Status**: Accepted
 - **See**: [PDR-0004](pdr/0004-settings-entry-affordance.md)
+
+### REQ-SET-001 Settings units
+
+Settings includes a Units section with Speed (`mph`, `km/h`) and Distance (`mi`, `km`) pickers. Choices persist across launches. Default speed unit is miles per hour; default distance unit is miles.
+
+- **Status**: Accepted
+- **See**: [PDR-0005](pdr/0005-preferred-units.md)
+
+### REQ-MET-001 Preferred units on display
+
+Displayed speed (and distance when that metric exists) uses the rider’s preferred unit from Settings. Changing a unit picker updates the current displayed value without waiting for a new sensor sample.
+
+- **Status**: Accepted
+- **See**: [PDR-0005](pdr/0005-preferred-units.md)

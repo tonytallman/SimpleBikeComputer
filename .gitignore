@@ -4,3 +4,6 @@ xcuserdata/
 # Swift Package Manager build artifacts (any local package)
 .build/
 .build-ios/
+
+# CLI-only lockfiles; app pins live in the Xcode workspace Package.resolved
+Packages/**/Package.resolved

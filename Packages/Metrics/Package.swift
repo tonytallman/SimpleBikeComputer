@@ -13,11 +13,18 @@ let package = Package(
             targets: ["Metrics"],
         ),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(
+            url: "https://github.com/apple/swift-async-algorithms",
+            from: "1.0.0",
+        ),
+    ],
     targets: [
         .target(
             name: "Metrics",
-            dependencies: [],
+            dependencies: [
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+            ],
         ),
         .testTarget(
             name: "MetricsTests",

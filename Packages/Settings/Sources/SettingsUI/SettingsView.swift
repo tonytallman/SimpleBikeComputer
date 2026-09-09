@@ -11,16 +11,18 @@ public struct SettingsView<ViewModel: SettingsViewModel>: View {
 
     public var body: some View {
         NavigationStack {
-            Form {}
-                .navigationTitle("Settings")
-                .navigationBarTitleDisplayMode(.large)
-                .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button("Done") {
-                            dismiss()
-                        }
+            Form {
+                UnitSettingsView(viewModel: viewModel.units)
+            }
+            .navigationTitle("Settings")
+            .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Done") {
+                        dismiss()
                     }
                 }
+            }
         }
     }
 }

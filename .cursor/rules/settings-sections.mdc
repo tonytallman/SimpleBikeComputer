@@ -1,0 +1,28 @@
+---
+description: Settings package section modularity — one View/VM per Form section, internal composition
+globs: Packages/Settings/**
+alwaysApply: false
+---
+
+# Settings sections
+
+Each Settings `Form` section is a pair: `*SettingsView` + `*SettingsViewModel` (e.g. `UnitSettingsView` / `UnitSettingsViewModel`).
+
+- Section protocols live in **SettingsVM** (SettingsVM must not import SettingsUI).
+- Section types are `package` or `internal`, not `public`.
+- `SettingsViewModel` exposes section children via `associatedtype` + a property; `RuntimeSettingsViewModel` constructs section VMs from collaborators already injected into the parent.
+- `SettingsView` embeds section views; it does not construct view models.
+- **DependencyContainer** injects only `RuntimeSettingsViewModel` and external collaborators (shared `MetricsSettings` built from `AppStorage` adapted to `SettingsStorage`). It must not construct or return section VMs.
+
+```swift
+// ✅ GOOD — facade constructs section VM internally
+final class RuntimeSettingsViewModel: SettingsViewModel {
+    let units: RuntimeUnitSettingsViewModel
+    init(metricsSettings: MetricsSettings) {
+        units = RuntimeUnitSettingsViewModel(metricsSettings: metricsSettings)
+    }
+}
+
+// ❌ BAD — composition root wires section VMs
+makeSettings: { RuntimeSettingsViewModel(units: RuntimeUnitSettingsViewModel(...)) }
+```
