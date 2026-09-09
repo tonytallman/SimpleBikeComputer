@@ -1,6 +1,7 @@
 #if DEBUG
 import Foundation
 import Observation
+import SwiftUI
 
 @Observable
 @MainActor
@@ -25,12 +26,19 @@ public final class PreviewUnitSettingsViewModel: UnitSettingsViewModel {
 @MainActor
 public final class PreviewSystemSettingsViewModel: SystemSettingsViewModel {
     public var keepScreenOn = true
+    public var locationPermissionStatusText = "Always"
 
     public init() {}
 
     public func setKeepScreenOn(_ keepOn: Bool) {
         keepScreenOn = keepOn
     }
+
+    public func viewAppeared() {}
+
+    public func scenePhaseChanged(to phase: ScenePhase) {}
+
+    public func openLocationPermissions() {}
 }
 
 @Observable

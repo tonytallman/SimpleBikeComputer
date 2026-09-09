@@ -1,16 +1,38 @@
+import CoreLocation
 import Foundation
 
 public final class CoreLocationSpeedSource: @unchecked Sendable {
     public let speed: AsyncStream<Measurement<UnitSpeed>>
     public let isAvailable: AsyncStream<Bool>
 
+    private let authorizationSession: CLServiceSession?
+    private let backgroundActivitySession: CLBackgroundActivitySession?
     private let consumeTask: Task<Void, Never>?
 
     public convenience init() {
-        self.init(updates: LiveLocationUpdates())
+        self.init(
+            updates: LiveLocationUpdates(),
+            authorizationSession: CLServiceSession(authorization: .always),
+            backgroundActivitySession: CLBackgroundActivitySession(),
+        )
+    }
+
+    private init(
+        updates: some LocationUpdatesProviding,
+        authorizationSession: CLServiceSession?,
+        backgroundActivitySession: CLBackgroundActivitySession?,
+    ) {
+        self.authorizationSession = authorizationSession
+        self.backgroundActivitySession = backgroundActivitySession
+        let streams = Self.makeStreams(from: updates)
+        speed = streams.speed
+        isAvailable = streams.isAvailable
+        consumeTask = streams.consumeTask
     }
 
     package init<Provider: LocationUpdatesProviding>(updates: Provider) {
+        authorizationSession = nil
+        backgroundActivitySession = nil
         let streams = Self.makeStreams(from: updates)
         speed = streams.speed
         isAvailable = streams.isAvailable

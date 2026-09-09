@@ -89,6 +89,20 @@ Settings includes a System section with a **Keep screen on** toggle. Default is 
 - **Status**: Accepted
 - **See**: [PDR-0006](pdr/0006-keep-screen-on.md)
 
+### REQ-SET-003 Location permission status
+
+Settings includes a System section **Location permission** row showing the current iOS Location authorization status (for example Always, While Using, Denied) and a control that opens the app’s page in iOS Settings. Status refreshes when Settings appears and when the app returns to the foreground.
+
+- **Status**: Accepted
+- **See**: [PDR-0007](pdr/0007-location-in-background.md)
+
+### REQ-SRC-001 Phone location in background
+
+The phone location source requests Always authorization at launch and continues sampling while the app is temporarily backgrounded so derived ride metrics (speed now; max speed, accumulated time, accumulated distance, and similar when present) do not lose data during brief interruptions.
+
+- **Status**: Accepted
+- **See**: [PDR-0007](pdr/0007-location-in-background.md)
+
 ### REQ-MET-001 Preferred units on display
 
 Displayed speed (and distance when that metric exists) uses the rider’s preferred unit from Settings. Changing a unit picker updates the current displayed value without waiting for a new sensor sample.

@@ -2,6 +2,7 @@ import SettingsVM
 import SwiftUI
 
 struct SystemSettingsView<ViewModel: SystemSettingsViewModel>: View {
+    @Environment(\.scenePhase) private var scenePhase
     @Bindable private var viewModel: ViewModel
 
     init(viewModel: ViewModel) {
@@ -16,6 +17,25 @@ struct SystemSettingsView<ViewModel: SystemSettingsViewModel>: View {
             )) {
                 Text("Keep screen on")
             }
+
+            HStack {
+                Text("Location permission")
+                Spacer()
+                Text(viewModel.locationPermissionStatusText)
+                    .foregroundStyle(.secondary)
+                Button {
+                    viewModel.openLocationPermissions()
+                } label: {
+                    Image(systemName: "arrow.up.forward.app")
+                }
+                .buttonStyle(.borderless)
+            }
+        }
+        .onAppear {
+            viewModel.viewAppeared()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            viewModel.scenePhaseChanged(to: newPhase)
         }
     }
 }
