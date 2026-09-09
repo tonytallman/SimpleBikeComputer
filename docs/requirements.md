@@ -109,3 +109,30 @@ Displayed speed (and distance when that metric exists) uses the rider’s prefer
 
 - **Status**: Accepted
 - **See**: [PDR-0005](pdr/0005-preferred-units.md)
+
+### REQ-MET-002 Moving time
+
+Accumulated time is **moving time**: it accrues only while instantaneous speed is at or above the autopause speed threshold. Stopped time (for example at traffic lights) does not increase total or trip time.
+
+- **Status**: Accepted
+- **See**: [PDR-0008](pdr/0008-autopause-moving-time.md)
+
+### REQ-MET-003 Autopause
+
+When instantaneous speed is below the autopause speed threshold, all time-boxed reductions pause (distance, time, maxima, averages when present). There is no hysteresis in v1. Default threshold is 3 mph until the rider changes it in Settings.
+
+- **Status**: Accepted
+- **See**: [PDR-0008](pdr/0008-autopause-moving-time.md)
+
+### REQ-MET-004 Time boxes
+
+Time-bound metrics are calculated for one of two time boxes: **total** (forever, never reset) and **trip** (manually resettable). There is no ride start/stop; the app does not model ride sessions.
+
+- **Status**: Accepted
+
+### REQ-SET-004 Autopause threshold
+
+Settings includes a control for the autopause speed threshold. The choice persists across launches. Default is 3 mph.
+
+- **Status**: Later
+- **See**: [PDR-0008](pdr/0008-autopause-moving-time.md)

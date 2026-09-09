@@ -9,6 +9,8 @@ Simple Bike Computer is a native iOS/iPadOS app that functions as a simple bike 
 | This file (`abstract.md`) | Vision: why the app exists, MVP vs later, non-goals, product language |
 | [`docs/requirements.md`](docs/requirements.md) | Living product requirements (edit in place) |
 | [`docs/pdr/`](docs/pdr/) | Product decision records (why a requirement looks like this) |
+| [`docs/adr/`](docs/adr/) | Architecture decision records (how we build it) |
+| [`docs/metrics-model.md`](docs/metrics-model.md) | Metrics mental model and code model (design reference) |
 
 Architecture decisions (how we build it) belong in `docs/adr/` when needed, not in PDRs.
 
@@ -20,7 +22,7 @@ The following metrics should be viewable in the app.
 
 - instantaneous speed
 - instantaneous cadence (when available)
-- time (total)
+- time (total) — moving time; accrues only while speed is at or above the autopause threshold ([PDR-0008](docs/pdr/0008-autopause-moving-time.md))
 - distance (total)
 
 ### Future
@@ -90,4 +92,5 @@ Mostly take settings screens and architecture from [Biker](https://github.com/to
 - Independent software modules are local Swift packages.
 - Code with dependencies defines its own dependencies, not coupling directly to other project types. For example, a hypothetical `class HeartRateService` will define an embedded `protocol Logger` and `protocol HeartRateSource` that the dependency container will satisfy with existing instances that might or might not need to adapted to fit the dependency protocols.
 - Prefer `AsyncSequence` over Combine for streaming APIs; see [ADR-0001](docs/adr/0001-asyncsequence-not-combine.md).
+- Metrics use reducers, projections, delta samples, and snapshot streams; see [ADR-0004](docs/adr/0004-metrics-reducers-projections-snapshots.md) and [`docs/metrics-model.md`](docs/metrics-model.md).
 - I want to have AI work in smaller chunks so that I can steer the development before too much code is written.
