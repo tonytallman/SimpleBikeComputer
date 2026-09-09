@@ -8,6 +8,14 @@ import Testing
 
 @MainActor
 struct RootViewModelTests {
+    private func makeSettingsViewModel() -> RuntimeSettingsViewModel {
+        let storage = InMemorySettingsStorage()
+        return RuntimeSettingsViewModel(
+            metricsSettings: DefaultMetricsSettings(storage: storage),
+            systemSettings: DefaultSystemSettings(storage: storage),
+        )
+    }
+
     @Test
     func exposesGivenPagesViewModel() {
         let pages = RuntimePagesViewModel(
@@ -28,10 +36,9 @@ struct RootViewModelTests {
                 ),
             ),
         )
-        let metricsSettings = DefaultMetricsSettings(storage: InMemorySettingsStorage())
         let viewModel = RuntimeRootViewModel(
             pages: pages,
-            makeSettings: { RuntimeSettingsViewModel(metricsSettings: metricsSettings) },
+            makeSettings: { makeSettingsViewModel() },
         )
 
         #expect(viewModel.pages === pages)
@@ -58,12 +65,11 @@ struct RootViewModelTests {
                 ),
             ),
         )
-        let metricsSettings = DefaultMetricsSettings(storage: InMemorySettingsStorage())
         let viewModel = RuntimeRootViewModel(
             pages: pages,
             makeSettings: {
                 factoryCallCount += 1
-                return RuntimeSettingsViewModel(metricsSettings: metricsSettings)
+                return makeSettingsViewModel()
             },
         )
 
@@ -95,10 +101,9 @@ struct RootViewModelTests {
                 ),
             ),
         )
-        let metricsSettings = DefaultMetricsSettings(storage: InMemorySettingsStorage())
         let viewModel = RuntimeRootViewModel(
             pages: pages,
-            makeSettings: { RuntimeSettingsViewModel(metricsSettings: metricsSettings) },
+            makeSettings: { makeSettingsViewModel() },
         )
 
         #expect(viewModel.isSettingsPresented == false)

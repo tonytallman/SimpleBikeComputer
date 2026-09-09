@@ -193,3 +193,110 @@ struct RuntimeUnitSettingsViewModelTests {
         #expect(viewModel.currentDistanceUnits == .kilometers)
     }
 }
+
+@Suite("DefaultSystemSettings Tests")
+struct DefaultSystemSettingsTests {
+    @Test("Default keepScreenOn is true")
+    func defaultKeepScreenOn() async {
+        let settings = DefaultSystemSettings(storage: InMemorySettingsStorage())
+
+        var receivedValues: [Bool] = []
+        let task = Task {
+            for await value in settings.keepScreenOn {
+                receivedValues.append(value)
+                if receivedValues.count == 1 { break }
+            }
+        }
+
+        await task.value
+
+        #expect(receivedValues == [true])
+    }
+
+    @Test("setKeepScreenOn publishes new value")
+    func setKeepScreenOnPublishes() async {
+        let settings = DefaultSystemSettings(storage: InMemorySettingsStorage())
+
+        var receivedValues: [Bool] = []
+        let task = Task {
+            for await value in settings.keepScreenOn {
+                receivedValues.append(value)
+                if receivedValues.count == 2 { break }
+            }
+        }
+
+        settings.setKeepScreenOn(false)
+        await task.value
+
+        #expect(receivedValues == [true, false])
+    }
+
+    @Test("Settings restores keepScreenOn from storage")
+    func restoresKeepScreenOnFromStorage() async {
+        let storage = InMemorySettingsStorage()
+        storage.set(value: false, forKey: "keepScreenOn")
+
+        let settings = DefaultSystemSettings(storage: storage)
+        var received: [Bool] = []
+        let task = Task {
+            for await value in settings.keepScreenOn {
+                received.append(value)
+                break
+            }
+        }
+        await task.value
+
+        #expect(received == [false])
+    }
+
+    @Test("Settings persists keepScreenOn when value changes")
+    func persistsKeepScreenOn() async {
+        let storage = InMemorySettingsStorage()
+        let settings1 = DefaultSystemSettings(storage: storage)
+        settings1.setKeepScreenOn(false)
+
+        let settings2 = DefaultSystemSettings(storage: storage)
+        var received: [Bool] = []
+        let task = Task {
+            for await value in settings2.keepScreenOn {
+                received.append(value)
+                break
+            }
+        }
+        await task.value
+
+        #expect(received == [false])
+    }
+}
+
+@MainActor
+@Suite("RuntimeSystemSettingsViewModel Tests")
+struct RuntimeSystemSettingsViewModelTests {
+    @Test("setKeepScreenOn updates keepScreenOn")
+    func setKeepScreenOnUpdatesState() async {
+        let settings = DefaultSystemSettings(storage: InMemorySettingsStorage())
+        let viewModel = RuntimeSystemSettingsViewModel(systemSettings: settings)
+
+        try? await Task.sleep(for: .milliseconds(50))
+
+        viewModel.setKeepScreenOn(false)
+
+        try? await Task.sleep(for: .milliseconds(50))
+
+        #expect(viewModel.keepScreenOn == false)
+    }
+
+    @Test("external systemSettings change updates keepScreenOn")
+    func externalKeepScreenOnChangeUpdatesState() async {
+        let settings = DefaultSystemSettings(storage: InMemorySettingsStorage())
+        let viewModel = RuntimeSystemSettingsViewModel(systemSettings: settings)
+
+        try? await Task.sleep(for: .milliseconds(50))
+
+        settings.setKeepScreenOn(false)
+
+        try? await Task.sleep(for: .milliseconds(50))
+
+        #expect(viewModel.keepScreenOn == false)
+    }
+}

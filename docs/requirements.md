@@ -82,6 +82,13 @@ Settings includes a Units section with Speed (`mph`, `km/h`) and Distance (`mi`,
 - **Status**: Accepted
 - **See**: [PDR-0005](pdr/0005-preferred-units.md)
 
+### REQ-SET-002 Keep screen on
+
+Settings includes a System section with a **Keep screen on** toggle. Default is on. The choice persists across launches and disables the system idle timer for the app session from launch, not only when Settings is open.
+
+- **Status**: Accepted
+- **See**: [PDR-0006](pdr/0006-keep-screen-on.md)
+
 ### REQ-MET-001 Preferred units on display
 
 Displayed speed (and distance when that metric exists) uses the rider’s preferred unit from Settings. Changing a unit picker updates the current displayed value without waiting for a new sensor sample.

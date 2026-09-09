@@ -23,8 +23,21 @@ public final class PreviewUnitSettingsViewModel: UnitSettingsViewModel {
 
 @Observable
 @MainActor
+public final class PreviewSystemSettingsViewModel: SystemSettingsViewModel {
+    public var keepScreenOn = true
+
+    public init() {}
+
+    public func setKeepScreenOn(_ keepOn: Bool) {
+        keepScreenOn = keepOn
+    }
+}
+
+@Observable
+@MainActor
 public final class PreviewSettingsViewModel: SettingsViewModel {
     public let units = PreviewUnitSettingsViewModel()
+    public let system = PreviewSystemSettingsViewModel()
 
     public init() {}
 }

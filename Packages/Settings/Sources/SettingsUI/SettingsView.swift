@@ -13,6 +13,7 @@ public struct SettingsView<ViewModel: SettingsViewModel>: View {
         NavigationStack {
             Form {
                 UnitSettingsView(viewModel: viewModel.units)
+                SystemSettingsView(viewModel: viewModel.system)
             }
             .navigationTitle("Settings")
             .navigationBarTitleDisplayMode(.large)

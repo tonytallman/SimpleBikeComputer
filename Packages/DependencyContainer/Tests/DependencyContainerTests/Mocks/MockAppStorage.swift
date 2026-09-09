@@ -1,6 +1,7 @@
+import DependencyContainer
 import Foundation
 
-final class MockAppStorage: AppStorage {
+final class MockAppStorage: AppStorage, @unchecked Sendable {
     private var storage: [String: Any] = [:]
     private(set) var setKeys: [String] = []
 

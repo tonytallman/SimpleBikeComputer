@@ -10,6 +10,8 @@ import SettingsVM
 @MainActor
 public final class DependencyContainer {
     private let metricsSettings: DefaultMetricsSettings
+    private let systemSettings: DefaultSystemSettings
+    private let keepScreenOnIdleTimer: KeepScreenOnIdleTimer
     private let coreLocationSpeedSource: CoreLocationSpeedSource
     private let speedSource: any Metrics.Metric<Measurement<UnitSpeed>>
     private let speedMetric: LayoutsModel.RuntimeMetric
@@ -20,6 +22,8 @@ public final class DependencyContainer {
             .withNamespacedKeys("Settings")
             .asSettingsStorage()
         metricsSettings = DefaultMetricsSettings(storage: settingsStorage)
+        systemSettings = DefaultSystemSettings(storage: settingsStorage)
+        keepScreenOnIdleTimer = KeepScreenOnIdleTimer(keepScreenOn: systemSettings.keepScreenOn)
         coreLocationSpeedSource = CoreLocationSpeedSource()
         speedSource = coreLocationSpeedSource.asSpeedMetric().shared()
         speedMetric = LayoutsModel.RuntimeMetric.speedMetric(
@@ -41,8 +45,11 @@ public final class DependencyContainer {
                     ),
                 ),
             ),
-            makeSettings: { [metricsSettings] in
-                RuntimeSettingsViewModel(metricsSettings: metricsSettings)
+            makeSettings: { [metricsSettings, systemSettings] in
+                RuntimeSettingsViewModel(
+                    metricsSettings: metricsSettings,
+                    systemSettings: systemSettings,
+                )
             },
         )
     }
