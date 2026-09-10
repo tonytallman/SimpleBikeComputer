@@ -146,6 +146,145 @@ struct DefaultMetricsSettingsTests {
 
         #expect(received == [.kilometers])
     }
+
+    @Test("Default autoPauseThreshold is 3 mph")
+    func defaultAutoPauseThreshold() async {
+        let settings = DefaultMetricsSettings(storage: InMemorySettingsStorage())
+
+        var received: [Measurement<UnitSpeed>] = []
+        let task = Task {
+            for await value in settings.autoPauseThreshold {
+                received.append(value)
+                if received.count == 1 { break }
+            }
+        }
+        await task.value
+
+        #expect(received.count == 1)
+        let threshold = received[0].converted(to: .milesPerHour)
+        #expect(abs(threshold.value - 3) <= 0.001)
+    }
+
+    @Test("setAutoPauseThreshold publishes new value")
+    func setAutoPauseThresholdPublishes() async {
+        let settings = DefaultMetricsSettings(storage: InMemorySettingsStorage())
+        let newThreshold = Measurement<UnitSpeed>(value: 5, unit: .milesPerHour)
+
+        var received: [Measurement<UnitSpeed>] = []
+        let task = Task {
+            for await value in settings.autoPauseThreshold {
+                received.append(value)
+                if received.count == 2 { break }
+            }
+        }
+
+        settings.setAutoPauseThreshold(newThreshold)
+        await task.value
+
+        let latest = received[1].converted(to: .milesPerHour)
+        #expect(abs(latest.value - 5) <= 0.001)
+    }
+
+    @Test("Settings restores autoPauseThreshold from storage")
+    func restoresAutoPauseThresholdFromStorage() async {
+        let storage = InMemorySettingsStorage()
+        let threshold = Measurement<UnitSpeed>(value: 4, unit: .milesPerHour)
+        storage.set(
+            value: threshold.converted(to: .metersPerSecond).value,
+            forKey: "autoPauseThresholdBaseValue",
+        )
+        storage.set(value: SpeedUnitKey.milesPerHour.rawValue, forKey: "autoPauseThresholdUnit")
+
+        let settings = DefaultMetricsSettings(storage: storage)
+        var received: [Measurement<UnitSpeed>] = []
+        let task = Task {
+            for await value in settings.autoPauseThreshold {
+                received.append(value)
+                break
+            }
+        }
+        await task.value
+
+        let restored = received[0].converted(to: .milesPerHour)
+        #expect(abs(restored.value - 4) <= 0.001)
+    }
+
+    @Test("Settings persists autoPauseThreshold when value changes")
+    func persistsAutoPauseThreshold() async {
+        let storage = InMemorySettingsStorage()
+        let settings1 = DefaultMetricsSettings(storage: storage)
+        let threshold = Measurement<UnitSpeed>(value: 6, unit: .kilometersPerHour)
+        settings1.setAutoPauseThreshold(threshold)
+
+        let settings2 = DefaultMetricsSettings(storage: storage)
+        var received: [Measurement<UnitSpeed>] = []
+        let task = Task {
+            for await value in settings2.autoPauseThreshold {
+                received.append(value)
+                break
+            }
+        }
+        await task.value
+
+        let restored = received[0].converted(to: .kilometersPerHour)
+        #expect(abs(restored.value - 6) <= 0.001)
+    }
+
+    @Test("Falls back to default autoPauseThreshold when storage is invalid")
+    func fallsBackToDefaultAutoPauseThreshold() async {
+        let storage = InMemorySettingsStorage()
+        storage.set(value: 1.0, forKey: "autoPauseThresholdBaseValue")
+        storage.set(value: "invalid", forKey: "autoPauseThresholdUnit")
+
+        let settings = DefaultMetricsSettings(storage: storage)
+        var received: [Measurement<UnitSpeed>] = []
+        let task = Task {
+            for await value in settings.autoPauseThreshold {
+                received.append(value)
+                break
+            }
+        }
+        await task.value
+
+        let threshold = received[0].converted(to: .milesPerHour)
+        #expect(abs(threshold.value - 3) <= 0.001)
+    }
+}
+
+@MainActor
+@Suite("RuntimeAutopauseSettingsViewModel Tests")
+struct RuntimeAutopauseSettingsViewModelTests {
+    @Test("setAutoPauseThreshold updates currentAutoPauseThreshold")
+    func setAutoPauseThresholdUpdatesState() async {
+        let settings = DefaultMetricsSettings(storage: InMemorySettingsStorage())
+        let viewModel = RuntimeAutopauseSettingsViewModel(metricsSettings: settings)
+
+        try? await Task.sleep(for: .milliseconds(50))
+
+        let mph = Measurement<UnitSpeed>(value: 5, unit: .milesPerHour)
+        viewModel.setAutoPauseThreshold(mph)
+
+        try? await Task.sleep(for: .milliseconds(50))
+
+        let current = viewModel.currentAutoPauseThreshold.converted(to: .milesPerHour)
+        #expect(abs(current.value - 5) <= 0.001)
+    }
+
+    @Test("external metricsSettings change updates currentAutoPauseThreshold")
+    func externalAutoPauseThresholdChangeUpdatesState() async {
+        let settings = DefaultMetricsSettings(storage: InMemorySettingsStorage())
+        let viewModel = RuntimeAutopauseSettingsViewModel(metricsSettings: settings)
+
+        try? await Task.sleep(for: .milliseconds(50))
+
+        let kph = Measurement<UnitSpeed>(value: 8, unit: .kilometersPerHour)
+        settings.setAutoPauseThreshold(kph)
+
+        try? await Task.sleep(for: .milliseconds(50))
+
+        let current = viewModel.currentAutoPauseThreshold.converted(to: .kilometersPerHour)
+        #expect(abs(current.value - 8) <= 0.001)
+    }
 }
 
 @MainActor

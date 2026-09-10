@@ -33,7 +33,7 @@ Adopt the model in [`docs/metrics-model.md`](../metrics-model.md):
 - **Timespan**: identity (`total`, `trip`) plus reset signal only; no metric state. Persistence keys: `Metrics.<Reducer>.<TimespanID>`.
 - **`MetricSnapshot`**: domain metrics emit one `AsyncStream<MetricSnapshot<Value>>` (`value`, `isAvailable`, `source`) instead of three independent properties. `shared()` multicasts snapshots. Domain metrics stay nameless; `LayoutsModel` factories unchanged.
 - **Source arbitration**: ranked, availability-driven selector (CSC over phone location) upstream of reducers and autopause gate. `source` on a snapshot is the *currently feeding* source.
-- **Autopause**: gate on sample streams per [PDR-0008](../pdr/0008-autopause-moving-time.md); implementation in a later phase.
+- **Autopause**: `AutoPauseDetector` and `AsyncSequence.gated(by:)` in Metrics per [PDR-0008](../pdr/0008-autopause-moving-time.md); reducer wiring in a later phase.
 
 Sources publish instantaneous values and delta samples by each source's best method. The app ranks sources, not integration methods.
 
@@ -43,4 +43,4 @@ Sources publish instantaneous values and delta samples by each source's best met
 
 **Negative**: More types than a single god accumulator; domain `Metric` protocol will change in a later phase (snapshot refactor before reducers land); first stream merge/throttle operators require adding swift-async-algorithms.
 
-**Risks / follow-ups**: Implement `MetricSnapshot` refactor while only speed is wired. Port autopause from Biker as `AsyncStream`. Add `wheelSamples` to location source and BluetoothBikeSensorSwift. Does not supersede ADR-0003.
+**Risks / follow-ups**: Implement `MetricSnapshot` refactor while only speed is wired. Wire autopause gate to reducers when `DistanceTimeReducer` lands. Add `wheelSamples` to location source and BluetoothBikeSensorSwift. Does not supersede ADR-0003.

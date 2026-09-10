@@ -136,7 +136,7 @@ See [PDR-0008](pdr/0008-autopause-moving-time.md) for product rules. Architectur
 - Moving time, distance, average speed, and average cadence all get correct pause behavior from one mechanism.
 - **All** time-boxed reductions pause together, including max speed.
 
-Implementation is ported from Biker in a later phase (Combine → `AsyncStream` per ADR-0001).
+`AutoPauseDetector` (speed + threshold → `MotionState`) and `AsyncSequence.gated(by:)` (forwards samples only while `.moving`) are implemented in the Metrics package (`AsyncStream` per ADR-0001). Reducers consume the gated sample stream in a later phase; the composition root does not wire the gate until then.
 
 ### 2.8 Persistence
 

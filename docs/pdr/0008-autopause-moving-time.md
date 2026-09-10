@@ -24,7 +24,7 @@ Alternatives considered:
 - Accumulated **time is moving time**: time-boxed reductions accrue only while instantaneous speed is **at or above** the autopause speed threshold.
 - When speed is below the threshold, **all** time-boxed reductions **pause** together — distance, time, maxima, and averages (when present). This includes max speed: a fresh max stays zero if the rider never exceeds the threshold (accepted edge case).
 - **Average cadence** (when present) means **while moving** (same gate as distance and time), not while pedaling.
-- The autopause **threshold is user-configurable**, persisted across launches, with default **3 mph** (matching Biker). A Settings control for the threshold is **Later** ([REQ-SET-004](requirements.md)); a stored default suffices until then.
+- The autopause **threshold is user-configurable**, persisted across launches, with default **3 mph** (matching Biker). Settings includes an **Autopause** section with a speed-threshold slider ([REQ-SET-004](requirements.md)).
 - **No hysteresis** in v1.
 
 Architecture (sample gate upstream of reducers) is in [ADR-0004](../adr/0004-metrics-reducers-projections-snapshots.md) and [`docs/metrics-model.md`](../metrics-model.md).
@@ -35,4 +35,4 @@ Architecture (sample gate upstream of reducers) is in [ADR-0004](../adr/0004-met
 
 **Negative**: No hysteresis may cause pause/resume flicker at crawl speeds until the rider raises the threshold or hysteresis is added later; max speed below threshold never records (accepted).
 
-**Risks / follow-ups**: Port autopause from Biker as `AsyncStream` (ADR-0001). Add Settings threshold picker when UI work allows. Revisit hysteresis if field testing shows chatter. "Average cadence while pedaling" remains a future optional reducer behind a separate gate.
+**Risks / follow-ups**: Autopause detector and sample gate are ported as `AsyncStream` (ADR-0001); reducers consume the gate in a later phase. Revisit hysteresis if field testing shows chatter. "Average cadence while pedaling" remains a future optional reducer behind a separate gate.

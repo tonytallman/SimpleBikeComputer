@@ -132,7 +132,7 @@ Time-bound metrics are calculated for one of two time boxes: **total** (forever,
 
 ### REQ-SET-004 Autopause threshold
 
-Settings includes a control for the autopause speed threshold. The choice persists across launches. Default is 3 mph.
+Settings includes an Autopause section with a speed-threshold slider (0–10 in the rider's current speed units). The choice persists across launches. Default is 3 mph.
 
-- **Status**: Later
+- **Status**: Accepted
 - **See**: [PDR-0008](pdr/0008-autopause-moving-time.md)

@@ -24,6 +24,19 @@ public final class PreviewUnitSettingsViewModel: UnitSettingsViewModel {
 
 @Observable
 @MainActor
+public final class PreviewAutopauseSettingsViewModel: AutopauseSettingsViewModel {
+    public var currentAutoPauseThreshold = Measurement<UnitSpeed>(value: 3, unit: .milesPerHour)
+    public var currentSpeedUnits: UnitSpeed = .milesPerHour
+
+    public init() {}
+
+    public func setAutoPauseThreshold(_ threshold: Measurement<UnitSpeed>) {
+        currentAutoPauseThreshold = threshold
+    }
+}
+
+@Observable
+@MainActor
 public final class PreviewSystemSettingsViewModel: SystemSettingsViewModel {
     public var keepScreenOn = true
     public var locationPermissionStatusText = "Always"
@@ -45,6 +58,7 @@ public final class PreviewSystemSettingsViewModel: SystemSettingsViewModel {
 @MainActor
 public final class PreviewSettingsViewModel: SettingsViewModel {
     public let units = PreviewUnitSettingsViewModel()
+    public let autopause = PreviewAutopauseSettingsViewModel()
     public let system = PreviewSystemSettingsViewModel()
 
     public init() {}

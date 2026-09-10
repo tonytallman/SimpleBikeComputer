@@ -26,4 +26,4 @@ Settings includes a **Units** section with Speed and Distance pickers. Preferenc
 
 **Negative**: Two pickers to maintain; distance picker has no visible effect until a distance metric is implemented.
 
-**Risks / follow-ups**: Wire distance conversion when total-distance metric lands. Auto-pause threshold may later need to respect speed units in its own Settings section.
+**Risks / follow-ups**: Wire distance conversion when total-distance metric lands. The Autopause threshold slider displays and edits in the rider's current speed units from the Units section.

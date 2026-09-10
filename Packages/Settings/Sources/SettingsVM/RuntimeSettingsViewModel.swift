@@ -4,6 +4,7 @@ import Observation
 @MainActor
 public final class RuntimeSettingsViewModel: SettingsViewModel {
     public let units: RuntimeUnitSettingsViewModel
+    public let autopause: RuntimeAutopauseSettingsViewModel
     public let system: RuntimeSystemSettingsViewModel
 
     public init(
@@ -11,6 +12,7 @@ public final class RuntimeSettingsViewModel: SettingsViewModel {
         systemSettings: SystemSettings,
     ) {
         units = RuntimeUnitSettingsViewModel(metricsSettings: metricsSettings)
+        autopause = RuntimeAutopauseSettingsViewModel(metricsSettings: metricsSettings)
         system = RuntimeSystemSettingsViewModel(systemSettings: systemSettings)
     }
 }
