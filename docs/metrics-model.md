@@ -198,20 +198,19 @@ flowchart TB
 
 ### 3.1 What already exists and stays
 
-- `Metrics.Metric<MeasurementType>` — the domain protocol today (`values`, `isAvailable`, `source`). **Every metric the UI can display, including reductions and projections, will be exposed as `any Metric<…>`.** The kinds in §2.1 are implementation shapes.
+- `Metrics.Metric<MeasurementType>` — the domain protocol (`snapshots: AsyncStream<MetricSnapshot<…>>`). **Every metric the UI can display, including reductions and projections, will be exposed as `any Metric<…>`.** The kinds in §2.1 are implementation shapes.
 - `RuntimeMetric`, `MetricWithSharing` / `.shared()` — multicast fan-out when one stream feeds several consumers.
 - `LayoutsModel.Metric` + `RuntimeMetric` factories owning display names ([ADR-0003](adr/0003-ui-metric-types-own-names.md)). Unchanged; the boundary holds.
 - `MetricSource` enum; DI with consumer-defined protocols and composition-root wiring.
 
 ### 3.2 MetricSnapshot: one stream, atomic metadata
 
-Value, availability, and source are rendered together in a field, so they should travel together:
+Value, availability, and source are rendered together in a field, so they travel together as one stream. Unavailable cannot carry a value or source — that would present stale data as current to autopause and reducers:
 
 ```swift
-struct MetricSnapshot<Value: Sendable>: Sendable {
-    let value: Value?              // last known; nil before first sample
-    let isAvailable: Bool          // false ⇒ UI can gray out the stale value
-    let source: MetricSource
+enum MetricSnapshot<Value: Sendable>: Sendable {
+    case unavailable
+    case available(value: Value, source: MetricSource)
 }
 
 // A domain metric is one AsyncStream<MetricSnapshot<Value>>
@@ -220,11 +219,10 @@ struct MetricSnapshot<Value: Sendable>: Sendable {
 
 This replaces three independent streams (`values`, `isAvailable`, `source`). Benefits:
 
-- `source` is a stream for free — it changes when arbitration switches sources.
-- Availability flips can carry the last-known value (gray out rather than blank a field).
-- No way to render a value with mismatched metadata.
-- New metadata is a new field on the snapshot; extensibility is preserved.
-- `shared()` multicasts the snapshot stream the same way it multicasts today.
+- `source` changes when arbitration switches sources, carried only on `.available`.
+- No invalid combinations (value without availability, or source while unavailable).
+- `shared()` multicasts the snapshot stream.
+- Gray-out of last-known display is a **field** concern: the UI keeps its last formatted value when `.unavailable` is dropped, not payload on the snapshot.
 
 `source` answers **"where is my data coming from right now?"** (BLE icon, phone icon) — not the provenance history of an accumulated number.
 

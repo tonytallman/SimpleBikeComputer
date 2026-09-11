@@ -6,95 +6,95 @@ import Testing
 struct MetricWithSharingTests {
     @Test
     func multipleSubscribersReceiveYields() async {
-        let (valuesStream, valuesContinuation) = AsyncStream.makeStream(of: Int.self)
-        let metric = RuntimeMetric(
-            values: valuesStream,
-            isAvailable: AsyncStream { $0.finish() },
-            source: MetricSource.phone,
-        ).shared()
+        let (snapshotsStream, snapshotsContinuation) = AsyncStream.makeStream(
+            of: MetricSnapshot<Int>.self,
+        )
+        let metric = RuntimeMetric(snapshots: snapshotsStream).shared()
 
-        var firstValues: [Int] = []
-        var secondValues: [Int] = []
+        var firstSnapshots: [MetricSnapshot<Int>] = []
+        var secondSnapshots: [MetricSnapshot<Int>] = []
 
         let firstTask = Task {
-            for await value in metric.values {
-                firstValues.append(value)
-                if firstValues.count == 2 { break }
+            for await snapshot in metric.snapshots {
+                firstSnapshots.append(snapshot)
+                if firstSnapshots.count == 2 { break }
             }
         }
         let secondTask = Task {
-            for await value in metric.values {
-                secondValues.append(value)
-                if secondValues.count == 2 { break }
+            for await snapshot in metric.snapshots {
+                secondSnapshots.append(snapshot)
+                if secondSnapshots.count == 2 { break }
             }
         }
 
         try? await Task.sleep(for: .milliseconds(50))
 
-        valuesContinuation.yield(1)
+        snapshotsContinuation.yield(.available(value: 1, source: .phone))
         try? await Task.sleep(for: .milliseconds(50))
-        valuesContinuation.yield(2)
+        snapshotsContinuation.yield(.available(value: 2, source: .phone))
         try? await Task.sleep(for: .milliseconds(50))
 
-        #expect(firstValues == [1, 2])
-        #expect(secondValues == [1, 2])
+        #expect(firstSnapshots == [
+            .available(value: 1, source: .phone),
+            .available(value: 2, source: .phone),
+        ])
+        #expect(secondSnapshots == [
+            .available(value: 1, source: .phone),
+            .available(value: 2, source: .phone),
+        ])
 
-        valuesContinuation.finish()
+        snapshotsContinuation.finish()
         await firstTask.value
         await secondTask.value
     }
 
     @Test
-    func lateSubscriberReceivesLatestValue() async {
-        let (valuesStream, valuesContinuation) = AsyncStream.makeStream(of: Int.self)
-        let metric = RuntimeMetric(
-            values: valuesStream,
-            isAvailable: AsyncStream { $0.finish() },
-            source: MetricSource.watch,
-        ).shared()
+    func lateSubscriberReceivesLatestSnapshot() async {
+        let (snapshotsStream, snapshotsContinuation) = AsyncStream.makeStream(
+            of: MetricSnapshot<Int>.self,
+        )
+        let metric = RuntimeMetric(snapshots: snapshotsStream).shared()
 
-        valuesContinuation.yield(10)
+        snapshotsContinuation.yield(.available(value: 10, source: .watch))
         try? await Task.sleep(for: .milliseconds(50))
 
-        var lateValues: [Int] = []
+        var lateSnapshots: [MetricSnapshot<Int>] = []
         let lateTask = Task {
-            for await value in metric.values {
-                lateValues.append(value)
+            for await snapshot in metric.snapshots {
+                lateSnapshots.append(snapshot)
                 break
             }
         }
 
         try? await Task.sleep(for: .milliseconds(50))
 
-        #expect(lateValues == [10])
+        #expect(lateSnapshots == [.available(value: 10, source: .watch)])
 
-        valuesContinuation.finish()
+        snapshotsContinuation.finish()
         await lateTask.value
     }
 
     @Test
     func finishIsObservedByAllSubscribers() async {
-        let (valuesStream, valuesContinuation) = AsyncStream.makeStream(of: Int.self)
-        let metric = RuntimeMetric(
-            values: valuesStream,
-            isAvailable: AsyncStream { $0.finish() },
-            source: MetricSource.phone,
-        ).shared()
+        let (snapshotsStream, snapshotsContinuation) = AsyncStream.makeStream(
+            of: MetricSnapshot<Int>.self,
+        )
+        let metric = RuntimeMetric(snapshots: snapshotsStream).shared()
 
         var firstFinished = false
         var secondFinished = false
 
         let firstTask = Task {
-            for await _ in metric.values {}
+            for await _ in metric.snapshots {}
             firstFinished = true
         }
         let secondTask = Task {
-            for await _ in metric.values {}
+            for await _ in metric.snapshots {}
             secondFinished = true
         }
 
         try? await Task.sleep(for: .milliseconds(50))
-        valuesContinuation.finish()
+        snapshotsContinuation.finish()
         try? await Task.sleep(for: .milliseconds(50))
 
         #expect(firstFinished)
@@ -105,49 +105,36 @@ struct MetricWithSharingTests {
     }
 
     @Test
-    func forwardsSource() {
-        let metric = RuntimeMetric<Int>(
-            values: AsyncStream { $0.finish() },
-            isAvailable: AsyncStream { $0.finish() },
-            source: MetricSource.bluetooth,
-        ).shared()
+    func sharesUnavailableSnapshots() async {
+        let (snapshotsStream, snapshotsContinuation) = AsyncStream.makeStream(
+            of: MetricSnapshot<Int>.self,
+        )
+        let metric = RuntimeMetric(snapshots: snapshotsStream).shared()
 
-        #expect(metric.source == .bluetooth)
-    }
-
-    @Test
-    func sharesAvailabilityStream() async {
-        let (availabilityStream, availabilityContinuation) = AsyncStream.makeStream(of: Bool.self)
-        let metric = RuntimeMetric<Int>(
-            values: AsyncStream { $0.finish() },
-            isAvailable: availabilityStream,
-            source: MetricSource.phone,
-        ).shared()
-
-        var firstAvailability: [Bool] = []
-        var secondAvailability: [Bool] = []
+        var firstSnapshots: [MetricSnapshot<Int>] = []
+        var secondSnapshots: [MetricSnapshot<Int>] = []
 
         let firstTask = Task {
-            for await isAvailable in metric.isAvailable {
-                firstAvailability.append(isAvailable)
-                if firstAvailability.count == 1 { break }
+            for await snapshot in metric.snapshots {
+                firstSnapshots.append(snapshot)
+                if firstSnapshots.count == 1 { break }
             }
         }
         let secondTask = Task {
-            for await isAvailable in metric.isAvailable {
-                secondAvailability.append(isAvailable)
-                if secondAvailability.count == 1 { break }
+            for await snapshot in metric.snapshots {
+                secondSnapshots.append(snapshot)
+                if secondSnapshots.count == 1 { break }
             }
         }
 
         try? await Task.sleep(for: .milliseconds(50))
-        availabilityContinuation.yield(false)
+        snapshotsContinuation.yield(.unavailable)
         try? await Task.sleep(for: .milliseconds(50))
 
-        #expect(firstAvailability == [false])
-        #expect(secondAvailability == [false])
+        #expect(firstSnapshots == [.unavailable])
+        #expect(secondSnapshots == [.unavailable])
 
-        availabilityContinuation.finish()
+        snapshotsContinuation.finish()
         await firstTask.value
         await secondTask.value
     }

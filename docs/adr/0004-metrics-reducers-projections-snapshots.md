@@ -9,7 +9,7 @@
 
 Simple Bike Computer is building metrics beyond instantaneous speed: accumulated distance and moving time (MVP), then averages and maximums. Time-boxed metrics use two **time boxes** — total (forever) and trip (manually resettable) — with no ride start/stop. Sources deliver data in different native shapes: phone location exposes Doppler speed and timestamped fixes; CSC BLE sensors expose cumulative wheel/crank counters with event timestamps ([BluetoothBikeSensorSwift](https://github.com/tonytallman/BluetoothBikeSensorSwift)).
 
-The related [Biker](https://github.com/tonytallman/Biker) app models metrics with Combine publishers and a shared ride context. This app forbids Combine in its modules ([ADR-0001](0001-asyncsequence-not-combine.md)). Domain metrics today expose three independent streams (`values`, `isAvailable`, `source`) on `Metrics.Metric`; UI display names stay in `LayoutsModel` ([ADR-0003](0003-ui-metric-types-own-names.md)).
+The related [Biker](https://github.com/tonytallman/Biker) app models metrics with Combine publishers and a shared ride context. This app forbids Combine in its modules ([ADR-0001](0001-asyncsequence-not-combine.md)). Domain metrics expose one `snapshots` stream on `Metrics.Metric`; UI display names stay in `LayoutsModel` ([ADR-0003](0003-ui-metric-types-own-names.md)).
 
 Product rules for moving time and autopause live in [PDR-0008](../pdr/0008-autopause-moving-time.md); this ADR records *how* metrics are built, not *what* pause semantics mean.
 
@@ -31,7 +31,7 @@ Adopt the model in [`docs/metrics-model.md`](../metrics-model.md):
 - **Delta samples**: `WheelSample` / `CrankSample` carry Δquantity and **source-measured** Δt as `Measurement<UnitDuration>`. No app clock on the accumulation path. Each consistency group uses its own Δt stream.
 - **Consistency-group reducers**: state grouped by what a projection must read atomically (e.g. `DistanceTimeReducer` for distance, time, and average speed). Max speed and crank groups are separate reducers.
 - **Timespan**: identity (`total`, `trip`) plus reset signal only; no metric state. Persistence keys: `Metrics.<Reducer>.<TimespanID>`.
-- **`MetricSnapshot`**: domain metrics emit one `AsyncStream<MetricSnapshot<Value>>` (`value`, `isAvailable`, `source`) instead of three independent properties. `shared()` multicasts snapshots. Domain metrics stay nameless; `LayoutsModel` factories unchanged.
+- **`MetricSnapshot`**: domain metrics emit one `AsyncStream<MetricSnapshot<Value>>` enum (`.unavailable` or `.available(value, source)`) instead of three independent properties. `shared()` multicasts snapshots. Domain metrics stay nameless; `LayoutsModel` factories unchanged.
 - **Source arbitration**: ranked, availability-driven selector (CSC over phone location) upstream of reducers and autopause gate. `source` on a snapshot is the *currently feeding* source.
 - **Autopause**: `AutoPauseDetector` and `AsyncSequence.gated(by:)` in Metrics per [PDR-0008](../pdr/0008-autopause-moving-time.md); reducer wiring in a later phase.
 
@@ -41,6 +41,6 @@ Sources publish instantaneous values and delta samples by each source's best met
 
 **Positive**: Averages from (Σquantity, Σt) are sample-rate unbiased; distance/time/average speed cannot mispair; timespan and reducer boundaries stay stable as metrics grow; source failover is safe on delta streams; snapshot streams keep value and metadata consistent for UI source icons.
 
-**Negative**: More types than a single god accumulator; domain `Metric` protocol will change in a later phase (snapshot refactor before reducers land); first stream merge/throttle operators require adding swift-async-algorithms.
+**Negative**: More types than a single god accumulator; first stream merge/throttle operators require swift-async-algorithms.
 
-**Risks / follow-ups**: Implement `MetricSnapshot` refactor while only speed is wired. Wire autopause gate to reducers when `DistanceTimeReducer` lands. Add `wheelSamples` to location source and BluetoothBikeSensorSwift. Does not supersede ADR-0003.
+**Risks / follow-ups**: Wire autopause gate to reducers when `DistanceTimeReducer` lands. Add `wheelSamples` to location source and BluetoothBikeSensorSwift. Feed snapshots into LayoutsModel fields for gray-out and source icons. Does not supersede ADR-0003.

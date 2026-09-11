@@ -5,44 +5,27 @@ import Testing
 @MainActor
 struct RuntimeMetricTests {
     @Test
-    func vendsGivenStreamsAndSource() async {
-        let (valuesStream, valuesContinuation) = AsyncStream.makeStream(of: Int.self)
-        let (availabilityStream, availabilityContinuation) = AsyncStream.makeStream(of: Bool.self)
-        let metric = RuntimeMetric(
-            values: valuesStream,
-            isAvailable: availabilityStream,
-            source: MetricSource.bluetooth,
+    func vendsGivenSnapshotStream() async {
+        let (snapshotsStream, snapshotsContinuation) = AsyncStream.makeStream(
+            of: MetricSnapshot<Int>.self,
         )
+        let metric = RuntimeMetric(snapshots: snapshotsStream)
 
-        #expect(metric.source == .bluetooth)
+        snapshotsContinuation.yield(.available(value: 42, source: .bluetooth))
 
-        valuesContinuation.yield(42)
-        availabilityContinuation.yield(true)
-
-        var values: [Int] = []
-        var availability: [Bool] = []
-
-        let valuesTask = Task {
-            for await value in metric.values {
-                values.append(value)
-                if values.count == 1 { break }
-            }
-        }
-        let availabilityTask = Task {
-            for await isAvailable in metric.isAvailable {
-                availability.append(isAvailable)
-                if availability.count == 1 { break }
+        var snapshots: [MetricSnapshot<Int>] = []
+        let snapshotsTask = Task {
+            for await snapshot in metric.snapshots {
+                snapshots.append(snapshot)
+                if snapshots.count == 1 { break }
             }
         }
 
         try? await Task.sleep(for: .milliseconds(50))
 
-        #expect(values == [42])
-        #expect(availability == [true])
+        #expect(snapshots == [.available(value: 42, source: .bluetooth)])
 
-        valuesContinuation.finish()
-        availabilityContinuation.finish()
-        await valuesTask.value
-        await availabilityTask.value
+        snapshotsContinuation.finish()
+        await snapshotsTask.value
     }
 }

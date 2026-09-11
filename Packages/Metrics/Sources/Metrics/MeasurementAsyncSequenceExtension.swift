@@ -27,4 +27,38 @@ extension AsyncSequence where Failure == Never {
             }
         }
     }
+
+    /// Converts available snapshot values to the units emitted by `units`.
+    /// `.unavailable` passes through unchanged. Re-emits when either the snapshot or unit changes.
+    public func inUnits<UnitType: Dimension, Units: AsyncSequence>(
+        _ units: Units,
+    ) -> AsyncStream<MetricSnapshot<Measurement<UnitType>>>
+    where Element == MetricSnapshot<Measurement<UnitType>>,
+        Self: Sendable,
+        Units.Element == UnitType,
+        Units.Failure == Never,
+        Units: Sendable
+    {
+        let combined = combineLatest(self, units)
+        return AsyncStream { continuation in
+            let task = Task {
+                for await (snapshot, unit) in combined {
+                    guard !Task.isCancelled else { return }
+                    switch snapshot {
+                    case .unavailable:
+                        continuation.yield(.unavailable)
+                    case .available(let value, let source):
+                        continuation.yield(.available(
+                            value: value.converted(to: unit),
+                            source: source,
+                        ))
+                    }
+                }
+                continuation.finish()
+            }
+            continuation.onTermination = { _ in
+                task.cancel()
+            }
+        }
+    }
 }

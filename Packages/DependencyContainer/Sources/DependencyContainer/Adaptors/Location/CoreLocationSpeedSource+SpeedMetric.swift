@@ -5,9 +5,11 @@ import Metrics
 extension CoreLocationSpeedSource {
     func asSpeedMetric() -> any Metric<Measurement<UnitSpeed>> {
         RuntimeMetric(
-            values: speed,
-            isAvailable: isAvailable,
-            source: .phone,
+            snapshots: MetricSnapshot.combining(
+                values: speed,
+                isAvailable: isAvailable,
+                source: .phone,
+            ),
         )
     }
 }

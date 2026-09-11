@@ -27,7 +27,12 @@ public final class DependencyContainer {
         coreLocationSpeedSource = CoreLocationSpeedSource()
         speedSource = coreLocationSpeedSource.asSpeedMetric().shared()
         speedMetric = LayoutsModel.RuntimeMetric.speedMetric(
-            values: speedSource.values.inUnits(metricsSettings.speedUnits),
+            values: speedSource.snapshots
+                .inUnits(metricsSettings.speedUnits)
+                .compactMap { snapshot in
+                    if case .available(let value, _) = snapshot { return value }
+                    return nil
+                },
         )
     }
 

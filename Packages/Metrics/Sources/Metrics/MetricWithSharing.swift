@@ -1,26 +1,14 @@
 import Foundation
 
 package final class MetricWithSharing<MeasurementType: Sendable>: Metric {
-    private let wrappedSource: MetricSource
-    private let valuesBroadcaster: SharedBroadcaster<MeasurementType>
-    private let availabilityBroadcaster: SharedBroadcaster<Bool>
+    private let snapshotsBroadcaster: SharedBroadcaster<MetricSnapshot<MeasurementType>>
 
     package init(wrapping wrapped: any Metric<MeasurementType>) {
-        wrappedSource = wrapped.source
-        valuesBroadcaster = SharedBroadcaster(upstream: wrapped.values)
-        availabilityBroadcaster = SharedBroadcaster(upstream: wrapped.isAvailable)
+        snapshotsBroadcaster = SharedBroadcaster(upstream: wrapped.snapshots)
     }
 
-    public var source: MetricSource {
-        wrappedSource
-    }
-
-    public var values: AsyncStream<MeasurementType> {
-        valuesBroadcaster.makeStream()
-    }
-
-    public var isAvailable: AsyncStream<Bool> {
-        availabilityBroadcaster.makeStream()
+    public var snapshots: AsyncStream<MetricSnapshot<MeasurementType>> {
+        snapshotsBroadcaster.makeStream()
     }
 }
 
