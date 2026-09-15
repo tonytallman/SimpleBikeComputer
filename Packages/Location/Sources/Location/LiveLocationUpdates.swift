@@ -24,14 +24,18 @@ struct LiveLocationUpdateSequence: AsyncSequence, Sendable {
             }
 
             let speed: Double?
+            let timestamp: Date?
             if let location = update.location {
                 speed = LocationUpdateSnapshot.speed(fromMetersPerSecond: location.speed)
+                timestamp = location.timestamp
             } else {
                 speed = nil
+                timestamp = nil
             }
 
             return LocationUpdateSnapshot(
                 speed: speed,
+                timestamp: timestamp,
                 authorizationDenied: update.authorizationDenied,
                 authorizationDeniedGlobally: update.authorizationDeniedGlobally,
             )

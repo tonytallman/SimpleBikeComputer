@@ -34,6 +34,16 @@ private struct FakeLocationUpdateSequence: AsyncSequence, Sendable {
     }
 }
 
+private func collectWheelSamples(
+    from source: CoreLocationSpeedSource,
+) async -> [WheelSample] {
+    var samples: [WheelSample] = []
+    for await sample in source.wheelSamples {
+        samples.append(sample)
+    }
+    return samples
+}
+
 @MainActor
 struct CoreLocationSpeedSourceTests {
     @Test
@@ -287,5 +297,226 @@ struct CoreLocationSpeedSourceTests {
         #expect(availability == [true, false])
 
         await task.value
+    }
+
+    @Test
+    func emitsNoWheelSampleFromSingleValidFix() async {
+        let source = CoreLocationSpeedSource(
+            updates: FakeLocationUpdates(
+                snapshots: [
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 0),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                ],
+            ),
+        )
+
+        let samples = await collectWheelSamples(from: source)
+
+        #expect(samples.isEmpty)
+    }
+
+    @Test
+    func emitsWheelSampleFromTwoConsecutiveValidFixes() async {
+        let source = CoreLocationSpeedSource(
+            updates: FakeLocationUpdates(
+                snapshots: [
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 0),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 1),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                ],
+            ),
+        )
+
+        let samples = await collectWheelSamples(from: source)
+
+        #expect(samples.count == 1)
+        #expect(samples[0].deltaDistance.value == 5.0)
+        #expect(samples[0].deltaDistance.unit == .meters)
+        #expect(samples[0].deltaTime.value == 1.0)
+        #expect(samples[0].deltaTime.unit == .seconds)
+    }
+
+    @Test
+    func emitsWheelSamplePerConsecutiveValidFixPair() async {
+        let source = CoreLocationSpeedSource(
+            updates: FakeLocationUpdates(
+                snapshots: [
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 0),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 1),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                    LocationUpdateSnapshot(
+                        speed: 4.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 2.5),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                ],
+            ),
+        )
+
+        let samples = await collectWheelSamples(from: source)
+
+        #expect(samples.count == 2)
+        #expect(samples[0].deltaDistance.value == 5.0)
+        #expect(samples[0].deltaTime.value == 1.0)
+        #expect(samples[1].deltaDistance.value == 6.0)
+        #expect(samples[1].deltaTime.value == 1.5)
+    }
+
+    @Test
+    func emitsZeroDistanceWheelSampleWhenStationary() async {
+        let source = CoreLocationSpeedSource(
+            updates: FakeLocationUpdates(
+                snapshots: [
+                    LocationUpdateSnapshot(
+                        speed: 0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 0),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                    LocationUpdateSnapshot(
+                        speed: 0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 1),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                ],
+            ),
+        )
+
+        let samples = await collectWheelSamples(from: source)
+
+        #expect(samples.count == 1)
+        #expect(samples[0].deltaDistance.value == 0)
+        #expect(samples[0].deltaTime.value == 1.0)
+    }
+
+    @Test
+    func doesNotEmitWheelSampleAcrossInvalidFixGap() async {
+        let source = CoreLocationSpeedSource(
+            updates: FakeLocationUpdates(
+                snapshots: [
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 0),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                    LocationUpdateSnapshot(
+                        speed: nil,
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 2),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 3),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                ],
+            ),
+        )
+
+        let samples = await collectWheelSamples(from: source)
+
+        #expect(samples.count == 1)
+        #expect(samples[0].deltaDistance.value == 5.0)
+        #expect(samples[0].deltaTime.value == 1.0)
+    }
+
+    @Test
+    func doesNotEmitWheelSampleWhenTimestampRepeats() async {
+        let source = CoreLocationSpeedSource(
+            updates: FakeLocationUpdates(
+                snapshots: [
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 0),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 0),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 1),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                ],
+            ),
+        )
+
+        let samples = await collectWheelSamples(from: source)
+
+        #expect(samples.count == 1)
+        #expect(samples[0].deltaDistance.value == 5.0)
+        #expect(samples[0].deltaTime.value == 1.0)
+    }
+
+    @Test
+    func keepsNewerAnchorWhenTimestampGoesBackward() async {
+        let source = CoreLocationSpeedSource(
+            updates: FakeLocationUpdates(
+                snapshots: [
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 10),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                    LocationUpdateSnapshot(
+                        speed: 100.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 5),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                    LocationUpdateSnapshot(
+                        speed: 5.0,
+                        timestamp: Date(timeIntervalSinceReferenceDate: 11),
+                        authorizationDenied: false,
+                        authorizationDeniedGlobally: false,
+                    ),
+                ],
+            ),
+        )
+
+        let samples = await collectWheelSamples(from: source)
+
+        #expect(samples.count == 1)
+        #expect(samples[0].deltaDistance.value == 5.0)
+        #expect(samples[0].deltaTime.value == 1.0)
     }
 }

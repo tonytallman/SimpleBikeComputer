@@ -82,7 +82,7 @@ Every speed/distance source publishes **both** an instantaneous speed stream and
 
 | Source | Instantaneous speed | Δdistance |
 |---|---|---|
-| **Phone location** | `CLLocation.speed` (Doppler-derived — better than differencing positions) | Source's choice: speed × Δt, or position deltas gated on `horizontalAccuracy` (raw position sums overestimate distance due to GPS jitter) |
+| **Phone location** | `CLLocation.speed` (Doppler-derived — better than differencing positions) | Doppler speed × Δt (`CLLocation.timestamp` interval); position deltas rejected because raw GPS sums overestimate distance due to jitter |
 | **CSC wheel sensor** | wheel revs × circumference ÷ event-time delta (CSC event timestamps have 1/1024 s resolution) | revolutions × configured wheel circumference — a direct measurement |
 | **Watch** (later) | whatever WatchConnectivity/HealthKit provides best | same principle |
 
